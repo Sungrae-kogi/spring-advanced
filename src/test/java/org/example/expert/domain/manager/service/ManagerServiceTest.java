@@ -38,8 +38,11 @@ class ManagerServiceTest {
     @InjectMocks
     private ManagerService managerService;
 
+    //테스트할 ManagerService를 @InjectMocks 를 붙이고, 의존성있는 객체들을 @Mock을 붙이면 InjectMocks를 붙인곳에
+    //의존성이 자동으로 주입. 따라서 ManagerService는 실제 실행때와 동일한 의존성을 보유
+
     @Test
-    public void manager_목록_조회_시_Todo가_없다면_NPE_에러를_던진다() {
+    public void manager_목록_조회_시_Todo가_없다면_InvalidRequestException_에러를_던진다() {
         // given
         long todoId = 1L;
         given(todoRepository.findById(todoId)).willReturn(Optional.empty());
