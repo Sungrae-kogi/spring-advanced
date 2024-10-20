@@ -32,11 +32,13 @@ public class JwtFilter implements Filter {
 
         String url = httpRequest.getRequestURI();
 
+        // /auth로 시작하는 URL은 인증 x
         if (url.startsWith("/auth")) {
             chain.doFilter(request, response);
             return;
         }
 
+        // 이외의 URL은 인증o -> JWT
         String bearerJwt = httpRequest.getHeader("Authorization");
 
         if (bearerJwt == null) {
@@ -55,6 +57,7 @@ public class JwtFilter implements Filter {
                 return;
             }
 
+            // claims에서 "userRole"이라는 키 값으로 설정된 값을 가져와 String.class 타입으로 변환. 그리고 그것을 valueOf()메소드에 전달.
             UserRole userRole = UserRole.valueOf(claims.get("userRole", String.class));
 
             httpRequest.setAttribute("userId", Long.parseLong(claims.getSubject()));

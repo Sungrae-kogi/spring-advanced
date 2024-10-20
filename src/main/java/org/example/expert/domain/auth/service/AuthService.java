@@ -27,10 +27,7 @@ public class AuthService {
     @Transactional
     public SignupResponse signup(SignupRequest signupRequest) {
 
-        // 바로 비밀번호의 암호화같은 동작을 하기보다는, 예외상황을 catch하여 동작을 중단시킬 필요가 있음.
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            throw new InvalidRequestException("이미 존재하는 이메일입니다.");
-        }
+        validateDuplicateUser(signupRequest);
 
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
@@ -60,5 +57,11 @@ public class AuthService {
         String bearerToken = jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserRole());
 
         return new SigninResponse(bearerToken);
+    }
+
+    public void validateDuplicateUser(SignupRequest signupRequest){
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            throw new InvalidRequestException("이미 존재하는 이메일입니다.");
+        }
     }
 }
